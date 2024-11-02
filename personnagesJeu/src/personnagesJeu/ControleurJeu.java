@@ -77,6 +77,22 @@ public class ControleurJeu extends AbstractModeleEcoutable {
             passerAuProchainTour();
         }
         System.out.println("La partie est terminée !");
+
+        Personnage gagnant = null;
+        int maxEnergie = -1;
+
+        for (Personnage personnage : personnages) {
+            if (personnage.getEnergie() > maxEnergie) {
+                maxEnergie = personnage.getEnergie();
+                gagnant = personnage;
+            }
+        }
+
+        if (gagnant != null) {
+            System.out.println("Le joueur " + gagnant.getNom() + " a gagné avec " + maxEnergie + " points d'énergie restants !");
+        } else {
+            System.out.println("Aucun gagnant. Tous les personnages ont perdu.");
+        }
     }
 
     private void effectuerTour() {
