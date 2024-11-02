@@ -4,12 +4,14 @@ public class Armes {
 
     private int durabilite ;
     private String type;
+    private Position position;
     private int munitions;
 
-  public Armes(int durabilite , String type, int munitions) {
+  public Armes(int durabilite , String type, int munitions, Position position) {
       this.durabilite = durabilite;
       this.type = type;
       this.munitions = this.munitions;
+      this.position = position;
   }
 
     public void utiliser(Personnage personnage) {

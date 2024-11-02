@@ -6,8 +6,8 @@ public class Mine extends Armes {
     private boolean explosion;
 
 
-    public Mine(String type, int durabilite, int munitions, int delaiExplosion, boolean visible, boolean explosion){
-        super(durabilite, type, munitions); //appel du constructeur de Armes
+    public Mine(String type, int durabilite, int munitions, int delaiExplosion, boolean visible, boolean explosion, Position position){
+        super(durabilite, type, munitions, position); //appel du constructeur de Armes
         this.visible = visible;
         this.delaiExplosion = delaiExplosion;
         this.explosion = explosion;

@@ -1,5 +1,7 @@
 package jeuCombat;
 
+import personnagesJeu.Bombe;
+import personnagesJeu.Mine;
 import personnagesJeu.Personnage;
 import personnagesJeu.Position;
 
@@ -42,8 +44,12 @@ public class Grille {
                     Object objet = positionObjectMap.get(position);
                     if (objet instanceof Personnage) {
                         System.out.print("P ");
-                    } else {
-                        System.out.print("O ");
+                    }
+                    if(objet instanceof Mine){
+                        System.out.print("M ");
+                    }
+                    if(objet instanceof Bombe){
+                        System.out.print("B ");
                     }
                 } else {
                     // Case vide

@@ -84,7 +84,7 @@ public class Personnage extends AbstractModeleEcoutable{
 
 
     public void deposerMine(Direction direction) {
-        Mine mine = new Mine("Mine", 1, 10, 5, true, false);
+        Mine mine = new Mine("Mine", 1, 10, 5, true, false, new Position(5,5));
         energie -=20;
         System.out.println(nom + " dépose une mine en position " + position);
         fireChangement();

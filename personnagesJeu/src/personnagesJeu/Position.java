@@ -21,13 +21,23 @@ public class Position {
         this.y = y;
     }
 
-    //verifier position actuelle
-    public boolean estEgale(Position autre) {
-        return this.x == autre.x && this.y == autre.y;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return x == position.x && y == position.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * x + y;
     }
 
 
+    @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "Position{" + "x=" + x + ", y=" + y + '}';
     }
+
 }

@@ -3,8 +3,8 @@ package personnagesJeu;
 public class Bombe extends Armes {
     private int rayonExplosion;
 
-    public Bombe(int durabilite, String type, int munitions, int rayonExplosion){
-        super(durabilite, type, munitions);
+    public Bombe(int durabilite, String type, int munitions, int rayonExplosion, Position position){
+        super(durabilite, type, munitions, position);
         this.rayonExplosion = rayonExplosion;
     }
 
