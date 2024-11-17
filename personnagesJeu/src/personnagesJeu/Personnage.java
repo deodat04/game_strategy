@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package personnagesJeu;
+import jeuCombat.Grille;
 import jeuCombat.observateurs.AbstractModeleEcoutable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +21,16 @@ public class Personnage extends AbstractModeleEcoutable{
     private Position position;
     private List<Armes> armes;
     private static final int energieMax = 100;
+    private Grille grille;
 
 
-    public Personnage(String nom, int energie, Position position, List<Armes> armes) {
+    public Personnage(String nom, int energie, Position position, List<Armes> armes,Grille grille) {
         this.nom = nom;
         this.energie = energie;
         this.position = position;
         this.bouclierActif = false;
         this.armes = armes;
+        this.grille = grille;
     }
 
     public String getNom() {
@@ -47,23 +50,55 @@ public class Personnage extends AbstractModeleEcoutable{
     }
 
     public void deplacer(Direction direction) {
+        int oldX = position.getX();
+        int oldY = position.getY();
+        Position anciennePosition = new Position(oldX, oldY);
+
+        //déplacement en fonction de la direction
         switch (direction) {
             case HAUT:
-                position.setY(position.getY() - 1);
+                if (position.getY() > 0) {
+                    position.setY(position.getY() - 1);
+                } else {
+                    System.out.println(nom + " ne peut pas se déplacer vers HAUT, position hors limite.");
+                    return; // Empêche le déplacement si hors limite
+                }
                 break;
             case BAS:
-                position.setY(position.getY() + 1);
+                if (position.getY() < grille.getHauteur() - 1) { // Vérifie si le déplacement est dans les limites de la grille
+                    position.setY(position.getY() + 1);
+                } else {
+                    System.out.println(nom + " ne peut pas se déplacer vers BAS, position hors limite.");
+                    return; //empêche le déplacement si hors limite
+                }
                 break;
             case GAUCHE:
-                position.setX(position.getX() - 1);
+                if (position.getX() > 0) {
+                    position.setX(position.getX() - 1);
+                } else {
+                    System.out.println(nom + " ne peut pas se déplacer vers GAUCHE, position hors limite.");
+                    return;
+                }
                 break;
             case DROITE:
-                position.setX(position.getX() + 1);
+                if (position.getX() < grille.getLargeur() - 1) {
+                    position.setX(position.getX() + 1);
+                } else {
+                    System.out.println(nom + " ne peut pas se déplacer vers DROITE, position hors limite.");
+                    return;
+                }
                 break;
         }
-        energie -=5;
+
+        Position nouvellePosition = new Position(position.getX(), position.getY());
+
+        //mise à jour de la grille avec la nouvelle position
+        grille.mettreAJourPosition(anciennePosition, nouvellePosition, this);
+
         System.out.println(nom + " se déplace vers " + direction);
     }
+
+
 
     public void setPosition(Position position) {
         this.position = position;
@@ -113,7 +148,7 @@ public class Personnage extends AbstractModeleEcoutable{
     }
 
     public void regenererEnergie() {
-        this.energie = Math.min(energie + 10, energieMax); //régénération limitée
+        this.energie = Math.min(energie + 10, energieMax);
         fireChangement();
     }
 

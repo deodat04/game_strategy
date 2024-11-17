@@ -25,15 +25,16 @@ public class JeuCombat {
         Position positionA3 = new Position(7, 3);
         Position positionA4 = new Position(9, 8);
 
+        Grille grille = new Grille(10,10);
+
+
         Bombe bombe1 = new Bombe(5, "Bim", 5, 4, positionA1);
         Bombe bombe2 = new Bombe(5, "Bam", 5, 4, positionA2);
         Mine mine1 = new Mine("Badaboum", 3, 5, 2, false, false, positionA3);
         Mine mine2 = new Mine("boomm", 3, 5, 2, false, false, positionA4);
 
-        JoueurHumain joueur1 = new JoueurHumain("JohnDoe", 50, positionJ1, List.of(bombe1,mine1));
-        JoueurIA joueur2 = new JoueurIA("Solara", 50, positionJ2, List.of(bombe2, mine2));
-
-        Grille grille = new Grille(10,10);
+        JoueurHumain joueur1 = new JoueurHumain("JohnDoe", 50, positionJ1, List.of(bombe1,mine1), grille);
+        JoueurIA joueur2 = new JoueurIA("Solara", 50, positionJ2, List.of(bombe2, mine2), grille);
 
         Strategie strategieJoueur1 = new StrategieOffensive();
         Strategie strategieJoueur2 = new StrategieDefensive();

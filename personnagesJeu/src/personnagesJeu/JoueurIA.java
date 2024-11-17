@@ -1,11 +1,13 @@
 package personnagesJeu;
+import jeuCombat.Grille;
+
 import java.util.List;
 
 
 public class JoueurIA extends Personnage {
 
-    public JoueurIA(String nom, int energie, Position position, List<Armes> armes) {
-        super(nom, energie, position, armes);
+    public JoueurIA(String nom, int energie, Position position, List<Armes> armes, Grille grille) {
+        super(nom, energie, position, armes, grille);
     }
 
     @Override

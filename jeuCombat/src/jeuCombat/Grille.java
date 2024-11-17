@@ -1,9 +1,6 @@
 package jeuCombat;
 
-import personnagesJeu.Bombe;
-import personnagesJeu.Mine;
-import personnagesJeu.Personnage;
-import personnagesJeu.Position;
+import personnagesJeu.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,12 +22,24 @@ public class Grille {
         positionObjectMap.put(position, objet);
     }
 
-    public void mettreAJourPosition(Position anciennePosition, Position nouvellePosition) {
-        Object objet = positionObjectMap.remove(anciennePosition);
-        if (objet != null) {
-            positionObjectMap.put(nouvellePosition, objet);
-        }
+    public void mettreAJourPosition(Position anciennePosition, Position nouvellePosition, Object objet) {
+        //retirer l'objet de l'ancienne position
+        positionObjectMap.remove(anciennePosition);
+
+        //ajouter l'objet à la nouvelle position
+        positionObjectMap.put(nouvellePosition, objet);
     }
+
+
+//    public void mettreAJourPosition(Position anciennePosition, Position nouvellePosition) {
+//        Object objet = positionObjectMap.remove(anciennePosition);
+//        if (objet != null) {
+//            positionObjectMap.put(nouvellePosition, objet);
+//        } else {
+//            System.out.println("Aucun objet trouvé à la position : " + anciennePosition);
+//        }
+//    }
+
 
     public boolean estPositionLibre(Position position) {
         return !positionObjectMap.containsKey(position);
@@ -42,13 +51,13 @@ public class Grille {
                 Position position = new Position(x, y);
                 if (positionObjectMap.containsKey(position)) {
                     Object objet = positionObjectMap.get(position);
-                    if (objet instanceof Personnage) {
-                        System.out.print("P ");
-                    }
-                    if(objet instanceof Mine){
+                    if (objet instanceof JoueurHumain) {
+                        System.out.print("H ");
+                    } else if (objet instanceof JoueurIA){
+                        System.out.print("I ");
+                    } else if (objet instanceof Mine) {
                         System.out.print("M ");
-                    }
-                    if(objet instanceof Bombe){
+                    } else if (objet instanceof Bombe) {
                         System.out.print("B ");
                     }
                 } else {
@@ -58,6 +67,15 @@ public class Grille {
             }
             System.out.println();
         }
+        System.out.println();
+    }
+
+
+    public int getLargeur() {
+        return largeur;
+    }
+    public int getHauteur() {
+        return hauteur;
     }
 
 }

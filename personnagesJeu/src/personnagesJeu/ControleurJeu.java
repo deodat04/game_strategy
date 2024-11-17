@@ -41,12 +41,21 @@ public class ControleurJeu extends AbstractModeleEcoutable {
             Position lastPosition = personnage.getPosition();
             personnage.deplacer(direction);
             Position nextPosition = personnage.getPosition();
-            System.out.println("Déplacement de " + personnage.getNom() + " de " + lastPosition + " à " + nextPosition);
+            if (!lastPosition.equals(nextPosition)) {
+                grille.mettreAJourPosition(lastPosition, nextPosition, personnage);
+                System.out.println("Déplacement de " + personnage.getNom() + " de " + lastPosition + " à " + nextPosition);
+            } else {
+                System.out.println(personnage.getNom() + " n'a pas bougé.");
+                System.out.println(nextPosition + " nouvelle position");
+
+            }
             fireChangement();
+            grille.afficherGrille();
         } else {
             System.out.println(personnage.getNom() + " n'a pas assez d'énergie pour se déplacer.");
         }
     }
+
 
     public void actionDeposerMine(Personnage personnage, Direction direction) {
         if (personnage.getEnergie() > 0) {
@@ -112,7 +121,7 @@ public class ControleurJeu extends AbstractModeleEcoutable {
     }
 
     private boolean endPartie() {
-        System.out.println("Fin de la partie !");
+        System.out.println("Fin du tour !");
         int joueursActifs = 0;
         for (Personnage personnage : personnages) {
             if (personnage.getEnergie() > 0) {

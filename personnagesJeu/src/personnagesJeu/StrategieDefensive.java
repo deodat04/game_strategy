@@ -4,6 +4,6 @@ public class StrategieDefensive implements Strategie {
     @Override
     public void executerTour(Personnage personnage, ControleurJeu controleur) {
         personnage.activerBouclier();
-        personnage.deplacer(Direction.BAS);
+        controleur.deplacement(personnage, Direction.DROITE);
     }
 }

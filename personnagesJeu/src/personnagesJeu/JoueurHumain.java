@@ -1,10 +1,12 @@
 package personnagesJeu;
+import jeuCombat.Grille;
+
 import java.util.List;
 
 public class JoueurHumain extends Personnage {
 
-    public JoueurHumain(String nom, int energie, Position position, List<Armes> armes) {
-        super(nom, energie, position, armes);
+    public JoueurHumain(String nom, int energie, Position position, List<Armes> armes, Grille grille) {
+        super(nom, energie, position, armes, grille);
     }
 
     @Override
