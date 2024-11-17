@@ -38,16 +38,14 @@ public class ControleurJeu extends AbstractModeleEcoutable {
 
     public void deplacement(Personnage personnage, Direction direction) {
         if (personnage.getEnergie() > 0) {
-            Position lastPosition = personnage.getPosition();
+            Position lastPosition = personnage.getPosition().clone();
             personnage.deplacer(direction);
             Position nextPosition = personnage.getPosition();
             if (!lastPosition.equals(nextPosition)) {
-                grille.mettreAJourPosition(lastPosition, nextPosition, personnage);
                 System.out.println("Déplacement de " + personnage.getNom() + " de " + lastPosition + " à " + nextPosition);
             } else {
                 System.out.println(personnage.getNom() + " n'a pas bougé.");
-                System.out.println(nextPosition + " nouvelle position");
-
+                System.out.println("Position actuelle : " + nextPosition);
             }
             fireChangement();
             grille.afficherGrille();

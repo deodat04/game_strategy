@@ -30,17 +30,6 @@ public class Grille {
         positionObjectMap.put(nouvellePosition, objet);
     }
 
-
-//    public void mettreAJourPosition(Position anciennePosition, Position nouvellePosition) {
-//        Object objet = positionObjectMap.remove(anciennePosition);
-//        if (objet != null) {
-//            positionObjectMap.put(nouvellePosition, objet);
-//        } else {
-//            System.out.println("Aucun objet trouvé à la position : " + anciennePosition);
-//        }
-//    }
-
-
     public boolean estPositionLibre(Position position) {
         return !positionObjectMap.containsKey(position);
     }

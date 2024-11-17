@@ -1,5 +1,7 @@
 package personnagesJeu;
 
+import java.util.Objects;
+
 public class Position {
     private int x;
     private int y;
@@ -31,7 +33,7 @@ public class Position {
 
     @Override
     public int hashCode() {
-        return 31 * x + y;
+        return Objects.hash(x, y);
     }
 
 
@@ -39,5 +41,10 @@ public class Position {
     public String toString() {
         return "Position{" + "x=" + x + ", y=" + y + '}';
     }
+
+    public Position clone() {
+        return new Position(this.x, this.y);
+    }
+
 
 }
