@@ -18,7 +18,7 @@ public class Personnage extends AbstractModeleEcoutable{
     private String nom;
     private int energie;
     private boolean bouclierActif;
-    private Position position;
+    public Position position;
     private List<Armes> armes;
     private static final int energieMax = 100;
     private Grille grille;
@@ -26,7 +26,7 @@ public class Personnage extends AbstractModeleEcoutable{
 
     public Personnage(String nom, int energie, Position position, List<Armes> armes,Grille grille) {
         this.nom = nom;
-        this.energie = energie;
+        this.energie = energie > 0 ? energie : 100;
         this.position = position;
         this.bouclierActif = false;
         this.armes = armes;
@@ -61,11 +61,11 @@ public class Personnage extends AbstractModeleEcoutable{
                     position.setY(position.getY() - 1);
                 } else {
                     System.out.println(nom + " ne peut pas se déplacer vers HAUT, position hors limite.");
-                    return; // Empêche le déplacement si hors limite
+                    return; //empêche le déplacement si hors limite
                 }
                 break;
             case BAS:
-                if (position.getY() < grille.getHauteur() - 1) { // Vérifie si le déplacement est dans les limites de la grille
+                if (position.getY() < grille.getHauteur() - 1) { //vérifie si le déplacement est dans les limites de la grille
                     position.setY(position.getY() + 1);
                 } else {
                     System.out.println(nom + " ne peut pas se déplacer vers BAS, position hors limite.");
@@ -118,17 +118,19 @@ public class Personnage extends AbstractModeleEcoutable{
     }
 
 
-    public void deposerMine(Direction direction) {
-        Mine mine = new Mine("Mine", 1, 10, 5, true, false, new Position(5,5));
-        energie -=20;
-        System.out.println(nom + " dépose une mine en position " + position);
-        fireChangement();
-    }
+//    public void deposerMine(Mine mine) {
+//        if (mine != null) {
+//            // Ajoute la mine à la liste des objets du personnage
+//            objets.add(mine);
+//            System.out.println(getNom() + " a ajouté une mine à son inventaire.");
+//        }
+//    }
+
 
     public void tirer(Direction direction) {
         if (!armes.isEmpty()) {
-            Armes arme = armes.get(0); // Utilisation de la première arme
-            arme.utiliser(this);  // Tire en utilisant l'arme
+            Armes arme = armes.get(0); //utilisation de la première arme
+            arme.utiliser(this);  //tire en utilisant l'arme
             energie -=10;
             System.out.println(nom + " tire en direction de " + direction + " avec " + arme.getType());
         } else {
@@ -152,17 +154,9 @@ public class Personnage extends AbstractModeleEcoutable{
         fireChangement();
     }
 
-    public void actualiserMine() {
-        for (Armes arme : armes) {
-            if (arme instanceof Mine) {
-                Mine mine = (Mine) arme;
-                mine.reduireDelai();
-                if (mine.estPreteAExploser()) {
-                    mine.exploser();
-                    fireChangement();
-                }
-            }
-        }
+    public void reduireEnergie(int energie) {
+        this.energie = energie;
+        fireChangement();
     }
     
 }

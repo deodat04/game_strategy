@@ -1,21 +1,25 @@
 package personnagesJeu;
 
+import jeuCombat.Grille;
+
 public class Mine extends Armes {
     private boolean visible;
     private int delaiExplosion;
     private boolean explosion;
+    private boolean utilisee;
 
 
-    public Mine(String type, int durabilite, int munitions, int delaiExplosion, boolean visible, boolean explosion, Position position){
-        super(durabilite, type, munitions, position); //appel du constructeur de Armes
+    public Mine(String type, int durabilite, int munitions, int delaiExplosion, boolean visible, boolean explosion, boolean utilisee, Position position){
+        super(durabilite, type, munitions, position);
         this.visible = visible;
         this.delaiExplosion = delaiExplosion;
         this.explosion = explosion;
+        this.utilisee = utilisee;
     }
 
     //exploser mine
     public void exploser() {
-        if (delaiExplosion == 0) {
+        if (delaiExplosion == 0 || explosion) {
             System.out.println("La mine " + getType() + " explose !");
             utiliser(null);
         } else {
@@ -41,4 +45,26 @@ public class Mine extends Armes {
         }
     }
 
+    public void detonnerSiNecessaire(Personnage personnage, Grille grille) {
+            exploser();
+            System.out.println("La mine explose au contact de " + personnage.getNom() + " !");
+            personnage.reduireEnergie(20);
+            grille.retirerObjet(personnage.getPosition());
+    }
+
+    public boolean isUtilisee() {
+        return utilisee;
+    }
+
+    public void setUtilisee(boolean utilisee) {
+        this.utilisee = utilisee;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public Position setPosition(Position position) {
+       return this.position = position;
+    }
 }

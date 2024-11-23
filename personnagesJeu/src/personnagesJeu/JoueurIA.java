@@ -22,10 +22,10 @@ public class JoueurIA extends Personnage {
         super.tirer(direction);
     }
 
-    @Override
-    public void deposerMine(Direction direction) {
-        System.out.println(getNom() + " (Joueur IA) dépose automatiquement une mine en position " + getPosition());
-        super.deposerMine(direction);
-    }
+//    @Override
+//    public void deposerMine(Direction direction) {
+//        System.out.println(getNom() + " (Joueur IA) dépose automatiquement une mine en position " + getPosition());
+//        super.deposerMine(direction);
+//    }
 
 }

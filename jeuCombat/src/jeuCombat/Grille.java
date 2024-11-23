@@ -2,7 +2,9 @@ package jeuCombat;
 
 import personnagesJeu.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -11,10 +13,12 @@ public class Grille {
     private int hauteur;
 
     private Map<Position, Object> positionObjectMap;
+    private Object[][] cases;
 
     public Grille(int largeur, int hauteur) {
         this.largeur = largeur;
         this.hauteur = hauteur;
+        this.cases = new Object[largeur][hauteur];
         this.positionObjectMap = new HashMap<>();
     }
 
@@ -67,4 +71,29 @@ public class Grille {
         return hauteur;
     }
 
+    public void retirerObjet(Position position) {
+        // Logique pour supprimer l'objet de la grille.
+        System.out.println("Objet retiré de la position : " + position);
+        cases[position.getX()][position.getY()] = null; //Suppression de l'objet.
+    }
+
+
+    public List<Personnage> getPersonnagesDansRayon(Position centre, int rayon) {
+        List<Personnage> personnagesAffectes = new ArrayList<>();
+        for (int x = Math.max(0, centre.getX() - rayon); x <= Math.min(largeur - 1, centre.getX() + rayon); x++) {
+            for (int y = Math.max(0, centre.getY() - rayon); y <= Math.min(hauteur - 1, centre.getY() + rayon); y++) {
+                if (cases[x][y] instanceof Personnage) {
+                    personnagesAffectes.add((Personnage) cases[x][y]);
+                }
+            }
+        }
+        return personnagesAffectes;
+    }
+
+    public Object getObjet(Position position) {
+        if (estPositionLibre(position)) {
+            return cases[position.getX()][position.getY()];
+        }
+        return null;
+    }
 }
