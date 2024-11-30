@@ -46,5 +46,11 @@ public class Position {
         return new Position(this.x, this.y);
     }
 
+    public double calculerDistance(Position autrePosition) {
+        int deltaX = this.x - autrePosition.getX();
+        int deltaY = this.y - autrePosition.getY();
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
 
 }

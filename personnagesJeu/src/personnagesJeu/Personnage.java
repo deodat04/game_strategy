@@ -117,16 +117,6 @@ public class Personnage extends AbstractModeleEcoutable{
         fireChangement();
     }
 
-
-//    public void deposerMine(Mine mine) {
-//        if (mine != null) {
-//            // Ajoute la mine à la liste des objets du personnage
-//            objets.add(mine);
-//            System.out.println(getNom() + " a ajouté une mine à son inventaire.");
-//        }
-//    }
-
-
     public void tirer(Direction direction) {
         if (!armes.isEmpty()) {
             Armes arme = armes.get(0); //utilisation de la première arme
@@ -145,7 +135,7 @@ public class Personnage extends AbstractModeleEcoutable{
     }
 
     public void rienFaire(){
-        System.out.println( nom + "ne fait rien cette fois");
+        System.out.println( nom + " ne fait rien cette fois");
 
     }
 
@@ -154,9 +144,52 @@ public class Personnage extends AbstractModeleEcoutable{
         fireChangement();
     }
 
-    public void reduireEnergie(int energie) {
-        this.energie = energie;
+    public void reduireEnergie(int energiePerdue) {
+        this.energie = Math.max(0, this.energie - energiePerdue);
         fireChangement();
     }
-    
+
+
+    public Personnage getPersonnageDansDirection(Position position, Direction direction) {
+        int x = position.getX();
+        int y = position.getY();
+
+        //System.out.println("Recherche de personnage dans la direction " + direction + " depuis la position " + position);
+
+        while (true) {
+            switch (direction) {
+                case HAUT:
+                    y--;
+                    break;
+                case BAS:
+                    y++;
+                    break;
+                case GAUCHE:
+                    x--;
+                    break;
+                case DROITE:
+                    x++;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Direction inconnue : " + direction);
+            }
+
+            Position nouvellePosition = new Position(x, y);
+            //System.out.println("Vérification de la position : " + nouvellePosition);
+
+            if (x < 0 || x >= grille.getLargeur() || y < 0 || y >= grille.getHauteur()) {
+                System.out.println("Position hors limites : " + nouvellePosition);
+                break;
+            }
+
+            Personnage personnage = grille.getPersonnageA(nouvellePosition);
+            if (personnage != null) {
+                System.out.println("Personnage trouvé : " + personnage.getNom() + " à la position " + nouvellePosition);
+                return personnage;
+            }
+        }
+
+        System.out.println("Aucun personnage trouvé dans la direction " + direction);
+        return null;
+    }
 }

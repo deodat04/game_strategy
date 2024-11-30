@@ -11,20 +11,15 @@ public class JoueurHumain extends Personnage {
 
     @Override
     public void deplacer(Direction direction) {
-        System.out.println(getNom() + " (Joueur Humain) se déplace vers " + direction);
+        //System.out.println(getNom() + " (Joueur Humain) se déplace vers " + direction);
         super.deplacer(direction);
     }
 
     @Override
     public void tirer(Direction direction) {
-        System.out.println(getNom() + " (Joueur Humain) tire vers " + direction);
+        //System.out.println(getNom() + " (Joueur Humain) tire vers " + direction);
         super.tirer(direction);
     }
 
-//    @Override
-//    public void deposerMine(Direction direction) {
-//        System.out.println(getNom() + " (Joueur Humain) dépose une mine en position " + getPosition());
-//        super.deposerMine(direction);
-//    }
 
 }

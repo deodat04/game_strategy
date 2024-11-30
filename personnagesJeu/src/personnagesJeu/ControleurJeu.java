@@ -30,21 +30,47 @@ public class ControleurJeu extends AbstractModeleEcoutable {
         return personnages;
     }
 
-    public void actionTirer(Personnage personnage, Direction direction) {
-        if (personnage.getEnergie() <= 0) {
-            System.out.println(personnage.getNom() + " n'a pas assez d'énergie pour tirer.");
+
+    public void actionTirer(Personnage tireur, Direction direction) {
+        //Vérifie si le tireur a assez d'énergie pour tirer
+        if (tireur.getEnergie() <= 0) {
+            System.out.println(tireur.getNom() + " n'a pas assez d'énergie pour tirer.");
             return;
         }
 
-        if (personnage.getArmes().isEmpty()) {
-            System.out.println(personnage.getNom() + " n'a pas d'arme pour tirer.");
+        if (tireur.getArmes().isEmpty()) {
+            System.out.println(tireur.getNom() + " n'a pas d'arme pour tirer.");
             return;
         }
 
-        Armes armeChoisie = personnage.getArmes().get(personnage.getArmes().size() - 1);
-        armeChoisie.utiliser(personnage);
-        personnage.setEnergie(personnage.getEnergie() - 10);
-        System.out.println(personnage.getNom() + " a tiré en direction de " + direction + " avec " + armeChoisie.getType());
+        Armes armeChoisie = tireur.getArmes().get(tireur.getArmes().size() - 1);
+        armeChoisie.utiliser(tireur);
+
+        //réduction de l'énergie du tireur après le tir
+        tireur.setEnergie(tireur.getEnergie() - 10); // Réduction d'énergie arbitraire
+        System.out.println(tireur.getNom() + " a tiré en direction de " + direction + " avec " + armeChoisie.getType());
+
+        //if personnage se trouve dans la direction visée
+        Position positionActuelle = tireur.getPosition();
+        System.out.println("Position actuelle du tireur : " + positionActuelle);
+
+        Personnage cible = tireur.getPersonnageDansDirection(positionActuelle, direction);
+
+        if (cible != null) {
+            //if cible est trouvée, appliquer les dégâts
+            System.out.println("Le tir a touché " + cible.getNom() + " à la position " + cible.getPosition());
+            cible.setEnergie(cible.getEnergie() - 10);
+            System.out.println(cible.getNom() + " perd 10 "  + " points d'énergie. Énergie restante : " + cible.getEnergie());
+
+            //vérifie si la cible est éliminée
+            if (cible.getEnergie() <= 0) {
+                System.out.println(cible.getNom() + " est éliminé !");
+            }
+        } else {
+            //if aucune cible n'est touchée
+            System.out.println("Le tir n'a touché aucun personnage.");
+        }
+
         fireChangement();
     }
 
@@ -54,15 +80,27 @@ public class ControleurJeu extends AbstractModeleEcoutable {
             Position lastPosition = personnage.getPosition().clone();
             personnage.deplacer(direction);
             Position nextPosition = personnage.getPosition();
-            if (!lastPosition.equals(nextPosition)) {
-                System.out.println("Déplacement de " + personnage.getNom() + " de " + lastPosition + " à " + nextPosition);
 
-                Object objetDansLaCase = grille.getObjet(nextPosition);
-                if (objetDansLaCase instanceof Mine) {
-                    ((Mine) objetDansLaCase).detonnerSiNecessaire(personnage, grille);
-                } else if (objetDansLaCase instanceof Bombe) {
-                    ((Bombe) objetDansLaCase).detonnerSiNecessaire(personnage, grille);
+            if (!lastPosition.equals(nextPosition)) {
+                System.out.println("Déplacement de " + personnage.getNom() + " de " + lastPosition + " à " + nextPosition + "de classe" + personnage.getClass().getSimpleName());
+
+                List<Object> objetsDansLaCase = grille.getObjets(nextPosition);
+
+                for (Object objet : objetsDansLaCase) {
+                    if (objet instanceof Bombe) {
+                        System.out.println("Une bombe a été détectée à la position " + nextPosition);
+                        Bombe bombe = (Bombe) objet;
+                        bombe.detonnerSiNecessaire(personnage, grille);
+                        grille.retirerObjet(nextPosition,bombe);
+                    } else if (objet instanceof Mine) {
+                        System.out.println("Une mine a été détectée à la position " + nextPosition);
+                        Mine mine = (Mine) objet;
+                        mine.detonnerSiNecessaire(personnage,grille);
+                        grille.retirerObjet(nextPosition,mine);
+                    }
                 }
+
+                //met à jour la grille après toutes les interactions
                 grille.mettreAJourPosition(lastPosition, nextPosition, personnage);
             } else {
                 System.out.println(personnage.getNom() + " n'a pas bougé.");
@@ -117,6 +155,7 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                 bombe.setPosition(position);
                 grille.ajouterObjet(position, bombe);
                 bombe.setUtilisee(true);
+                bombe.setPoseur(personnage);
                 fireChangement();
                 System.out.println(personnage.getNom() + " a déposé une bombe en position " + position);
             } else {
@@ -126,18 +165,6 @@ public class ControleurJeu extends AbstractModeleEcoutable {
             System.out.println(personnage.getNom() + " n'a plus de bombes disponibles.");
         }
     }
-
-
-
-//    public void actionDeposerMine(Personnage personnage, Position position) {
-//        if (personnage.getEnergie() > 0) {
-//            personnage.deposerMine(position);
-//            System.out.println(personnage.getNom() + " a déposé une mine en direction de " + position);
-//            fireChangement();
-//        } else {
-//            System.out.println(personnage.getNom() + " ne peut pas déposer de mine.");
-//        }
-//    }
 
     public void actionActiverBouclier(Personnage personnage) {
         if (personnage.getEnergie() > 0) {
@@ -176,6 +203,7 @@ public class ControleurJeu extends AbstractModeleEcoutable {
         }
     }
 
+
     private void effectuerTour() {
         Personnage personnageEnCours = personnages.get(tourActuel);
         //Strategie strategie = strategies.get(tourActuel);
@@ -191,17 +219,18 @@ public class ControleurJeu extends AbstractModeleEcoutable {
         //System.out.println("Tour suivant : " + personnages.get(tourActuel).getNom());
     }
 
+    public void miseAJourMines() {
+        for (Position position : grille.getToutesLesPositions()) {
+            for (Object objet : grille.getObjetsSurPosition(position)) {
+                if (objet instanceof Mine) {
+                    Mine mine = (Mine) objet;
+                    mine.miseAJourDelai(grille); //update délai de la mine
+                }
+            }
+        }
+    }
 
-//    private boolean endPartie() {
-//        System.out.println("Fin du tour !");
-//        int joueursActifs = 0;
-//        for (Personnage personnage : personnages) {
-//            if (personnage.getEnergie() > 0) {
-//                joueursActifs++;
-//            }
-//        }
-//        return joueursActifs <= 1;
-//    }
+
 
     private Personnage verifierGagnant(List<Personnage> joueurs) {
         List<Personnage> joueursRestants = joueurs.stream()
@@ -214,8 +243,6 @@ public class ControleurJeu extends AbstractModeleEcoutable {
 
         return null;
     }
-
-
 
     public void partieManuel() {
         Scanner scanner = new Scanner(System.in);
@@ -259,7 +286,7 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                         null
                 );
                 armes.add(mine);
-                grille.ajouterObjet(positionInitiale, mine);
+                grille.ajouterObjet(null, mine);
             }
 
             System.out.print("Entrez le nombre de bombes (max " + Constantes.MAX_BOMBE + ") : ");
@@ -278,7 +305,7 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                         null
                 );
                 armes.add(bombe);
-                grille.ajouterObjet(positionInitiale, bombe);
+                grille.ajouterObjet(null, bombe);
 
             }
 
@@ -304,9 +331,10 @@ public class ControleurJeu extends AbstractModeleEcoutable {
         System.out.println("La partie va démarrer !");
         grille.afficherGrille();
 
-        // Tour par tour
+        //Tour par tour
         while (!endPartie()) {
             for (Personnage personnage : personnages) {
+                miseAJourMines();
                 if (personnage.getEnergie() <= 0) continue;
 
                 for (int action = 0; action < 2; action++) {
@@ -315,6 +343,8 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                     System.out.println("2- Déposer Mine");
                     System.out.println("3- Se déplacer");
                     System.out.println("4- Utiliser arme");
+                    System.out.println("5- Activer bouclier");
+                    System.out.println("6- Rien faire");
 
                     int choixAction = scanner.nextInt();
                     scanner.nextLine();
@@ -384,6 +414,13 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                                 }
                             };
                             actionTirer(personnage, direction);
+                            //System.out.println("Le personnage  " + personnage +  "tire et en direction  " + direction);
+                        }
+                        case 5 -> {
+                            actionActiverBouclier(personnage);
+                        }
+                        case 6 -> {
+                            actionRienFaire(personnage);
                         }
                     }
                 }

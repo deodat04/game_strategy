@@ -18,12 +18,18 @@ public class Mine extends Armes {
     }
 
     //exploser mine
-    public void exploser() {
-        if (delaiExplosion == 0 || explosion) {
-            System.out.println("La mine " + getType() + " explose !");
-            utiliser(null);
+    public void exploser(Grille grille) {
+        if (!explosion) {
+            System.out.println("La mine " + getType() + " explose à la position " + position + " !");
+            grille.retirerObjet(position, this);
+
+            for (Personnage personnage : grille.getPersonnagesDansRayon(position, 1,grille)) {
+                System.out.println("Dégâts infligés à " + personnage.getNom());
+                personnage.reduireEnergie(20);
+            }
+            explosion = true;
         } else {
-            System.out.println("La mine n'est pas encore prête à exploser.");
+            System.out.println("La mine a déjà explosé.");
         }
     }
 
@@ -46,11 +52,30 @@ public class Mine extends Armes {
     }
 
     public void detonnerSiNecessaire(Personnage personnage, Grille grille) {
-            exploser();
+        if (estPreteAExploser()) {
+            exploser(grille);
             System.out.println("La mine explose au contact de " + personnage.getNom() + " !");
             personnage.reduireEnergie(20);
-            grille.retirerObjet(personnage.getPosition());
+            grille.retirerObjet(personnage.getPosition(),this);
+        } else {
+            System.out.println("La mine n'est pas encore prête à exploser.");
+        }
     }
+
+
+
+    public void miseAJourDelai(Grille grille) {
+        if (delaiExplosion > 0) {
+            reduireDelai();
+            System.out.println("La mine " + getType() + " a un délai d'explosion réduit à " + delaiExplosion + ".");
+        }
+        if (delaiExplosion == 0 && !explosion) {
+            explosion = true;
+            exploser(grille);
+        }
+    }
+
+
 
     public boolean isUtilisee() {
         return utilisee;
