@@ -59,12 +59,14 @@ public class ControleurJeu extends AbstractModeleEcoutable {
         if (cible != null) {
             //if cible est trouvée, appliquer les dégâts
             System.out.println("Le tir a touché " + cible.getNom() + " à la position " + cible.getPosition());
-            cible.setEnergie(cible.getEnergie() - 10);
-            System.out.println(cible.getNom() + " perd 10 "  + " points d'énergie. Énergie restante : " + cible.getEnergie());
+            cible.setVie(cible.getVie() - 25);
+            System.out.println(cible.getNom() + " perd 25 "  + " points de vie. Vie restante : " + cible.getVie());
 
             //vérifie si la cible est éliminée
-            if (cible.getEnergie() <= 0) {
+            if (cible.getVie() <= 0) {
+                grille.retirerObjet(cible.position, cible);
                 System.out.println(cible.getNom() + " est éliminé !");
+
             }
         } else {
             //if aucune cible n'est touchée
@@ -283,7 +285,9 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                         false,
                         false,
                         false,
-                        null
+                        null,
+                        true
+
                 );
                 armes.add(mine);
                 grille.ajouterObjet(null, mine);
@@ -302,7 +306,8 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                         Constantes.MUNITIONS_ARMES.get("bombe"),
                         Constantes.RAYONS_EXPLOSION.get("moyen"),
                         false,
-                        null
+                        null,
+                        true
                 );
                 armes.add(bombe);
                 grille.ajouterObjet(null, bombe);
@@ -318,12 +323,12 @@ public class ControleurJeu extends AbstractModeleEcoutable {
             scanner.nextLine();
 
             switch (choixFusil) {
-                case 1 -> armes.add(new FusilAssaut("fusil_assaut", null));
-                case 2 -> armes.add(new FusilPrecision("fusil_precision", null));
-                case 3 -> armes.add(new Mitrailleuse("mitrailleuse", null));
+                case 1 -> armes.add(new FusilAssaut("fusil_assaut", null,true));
+                case 2 -> armes.add(new FusilPrecision("fusil_precision", null,true));
+                case 3 -> armes.add(new Mitrailleuse("mitrailleuse", null,true));
             }
 
-            JoueurHumain joueur = new JoueurHumain(nom, 100, positionInitiale, armes, grille);
+            Personnage joueur = new Personnage(nom, 100, positionInitiale, armes, grille, 100);
             personnages.add(joueur);
             grille.ajouterObjet(positionInitiale, joueur);
         }
@@ -337,7 +342,7 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                 miseAJourMines();
                 if (personnage.getEnergie() <= 0) continue;
 
-                for (int action = 0; action < 2; action++) {
+                for (int action = 0; action < 1; action++) {
                     System.out.println("\nTour de : " + personnage.getNom());
                     System.out.println("1- Déposer Bombe");
                     System.out.println("2- Déposer Mine");
@@ -425,9 +430,9 @@ public class ControleurJeu extends AbstractModeleEcoutable {
                     }
                 }
             }
-            System.out.println("\nÉnergie restante des joueurs :");
+            System.out.println("\nVie restante des joueurs :");
             for (Personnage joueur : personnages) {
-                System.out.println(joueur.getNom() + " : " + joueur.getEnergie() + " points d'énergie.");
+                System.out.println(joueur.getNom() + " : " + joueur.getVie() + " points de vie.");
             }
 
             grille.afficherGrille();
@@ -442,13 +447,13 @@ public class ControleurJeu extends AbstractModeleEcoutable {
 
     private boolean endPartie() {
         System.out.println("Vérification de la fin de partie...");
-        long joueursAvecEnergie = personnages.stream().filter(joueur -> joueur.getEnergie() > 0).count();
+        long joueursAvecVie = personnages.stream().filter(joueur -> joueur.getVie() > 0).count();
         System.out.println(" joueurs : " + personnages);
-        System.out.println("Nombre de joueurs avec énergie : " + joueursAvecEnergie);
+        System.out.println("Nombre de joueurs avec vie : " + joueursAvecVie);
 
-        if (joueursAvecEnergie <= 1) {
+        if (joueursAvecVie <= 1) {
             personnages.stream()
-                    .filter(joueur -> joueur.getEnergie() > 0)
+                    .filter(joueur -> joueur.getVie() > 0)
                     .findFirst()
                     .ifPresentOrElse(
                             gagnant -> System.out.println("Le gagnant est : " + gagnant.getNom()),

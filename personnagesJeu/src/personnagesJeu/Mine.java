@@ -9,8 +9,8 @@ public class Mine extends Armes {
     private boolean utilisee;
 
 
-    public Mine(String type, int durabilite, int munitions, int delaiExplosion, boolean visible, boolean explosion, boolean utilisee, Position position){
-        super(durabilite, type, munitions, position);
+    public Mine(String type, int durabilite, int munitions, int delaiExplosion, boolean visible, boolean explosion, boolean utilisee, Position position, boolean autorise){
+        super(durabilite, type, munitions, position, autorise);
         this.visible = visible;
         this.delaiExplosion = delaiExplosion;
         this.explosion = explosion;
@@ -25,7 +25,7 @@ public class Mine extends Armes {
 
             for (Personnage personnage : grille.getPersonnagesDansRayon(position, 1,grille)) {
                 System.out.println("Dégâts infligés à " + personnage.getNom());
-                personnage.reduireEnergie(20);
+                personnage.reduireVie(20);
             }
             explosion = true;
         } else {
@@ -55,7 +55,7 @@ public class Mine extends Armes {
         if (estPreteAExploser()) {
             exploser(grille);
             System.out.println("La mine explose au contact de " + personnage.getNom() + " !");
-            personnage.reduireEnergie(20);
+            personnage.reduireVie(20);
             grille.retirerObjet(personnage.getPosition(),this);
         } else {
             System.out.println("La mine n'est pas encore prête à exploser.");

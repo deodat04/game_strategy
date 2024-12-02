@@ -9,8 +9,8 @@ public class Bombe extends Armes {
     private boolean utilisee;
     private Personnage poseur;
 
-    public Bombe(int durabilite, String type, int munitions, int rayonExplosion, boolean utilisee, Position position){
-        super(durabilite, type, munitions, position);
+    public Bombe(int durabilite, String type, int munitions, int rayonExplosion, boolean utilisee, Position position,boolean autorise){
+        super(durabilite, type, munitions, position,autorise);
         this.rayonExplosion = rayonExplosion;
         this.utilisee = utilisee;
     }
@@ -35,8 +35,8 @@ public class Bombe extends Armes {
             } else {
                 System.out.println("Dégâts infligés à " + p.getNom());
             }
-            p.reduireEnergie(30);
-            System.out.println("Il reste " + p.getEnergie() + " à " + p.getNom());
+            p.reduireVie(30);
+            System.out.println("Il reste " + p.getVie() + " à " + p.getNom());
 
         }
     }

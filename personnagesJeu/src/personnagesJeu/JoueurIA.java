@@ -6,8 +6,8 @@ import java.util.List;
 
 public class JoueurIA extends Personnage {
 
-    public JoueurIA(String nom, int energie, Position position, List<Armes> armes, Grille grille) {
-        super(nom, energie, position, armes, grille);
+    public JoueurIA(String nom, int energie, Position position, List<Armes> armes, Grille grille, int vie) {
+        super(nom, energie, position, armes, grille, vie);
     }
 
     @Override

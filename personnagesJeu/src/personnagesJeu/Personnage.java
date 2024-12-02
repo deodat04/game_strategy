@@ -22,15 +22,27 @@ public class Personnage extends AbstractModeleEcoutable{
     private List<Armes> armes;
     private static final int energieMax = 100;
     private Grille grille;
+    private int vie;
 
 
-    public Personnage(String nom, int energie, Position position, List<Armes> armes,Grille grille) {
+
+    public Personnage(String nom, int energie, Position position, List<Armes> armes,Grille grille,int vie) {
         this.nom = nom;
         this.energie = energie > 0 ? energie : 100;
         this.position = position;
         this.bouclierActif = false;
         this.armes = armes;
         this.grille = grille;
+        this.vie= vie;
+
+    }
+
+    public int getVie(){
+        return vie;
+    }
+
+    public void setVie(int v){
+        vie=v;
     }
 
     public String getNom() {
@@ -44,6 +56,21 @@ public class Personnage extends AbstractModeleEcoutable{
     public List<Armes> getArmes() {
         return armes;
     }
+
+    public List<Mine> getMines() {
+        return armes.stream()
+                .filter(arme -> arme instanceof Mine)
+                .map(arme -> (Mine) arme)
+                .toList();
+    }
+
+    public List<Bombe> getBombs() {
+        return armes.stream()
+                .filter(arme -> arme instanceof Bombe)
+                .map(arme -> (Bombe) arme)
+                .toList();
+    }
+
 
     public void ajouterArme(Armes arme) {
         armes.add(arme);
@@ -117,6 +144,11 @@ public class Personnage extends AbstractModeleEcoutable{
         fireChangement();
     }
 
+    public void reduireVie(int viePerdue) {
+        this.vie = Math.max(0, this.vie - viePerdue);
+        fireChangement();
+    }
+
     public void tirer(Direction direction) {
         if (!armes.isEmpty()) {
             Armes arme = armes.get(0); //utilisation de la première arme
@@ -130,8 +162,6 @@ public class Personnage extends AbstractModeleEcoutable{
 
     public void activerBouclier() {
         bouclierActif = true;
-        energie -=15;
-        System.out.println( nom + "active son bouclier hahaha");
     }
 
     public void rienFaire(){

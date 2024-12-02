@@ -10,12 +10,24 @@ public class Grille {
     private int hauteur;
     private final Map<Position, List<Object>> positionObjectMap;
     private List<Personnage> personnages;
+    private List<Mur> murs;
+    private boolean[][] casesOccupees;
+    private Personnage[][] grille;
 
     public Grille(int largeur, int hauteur) {
         this.largeur = largeur;
         this.hauteur = hauteur;
+        this.grille = new Personnage[largeur][hauteur];
         this.positionObjectMap = new HashMap<>();
         this.personnages = new ArrayList<>();
+        this.murs = Constantes.initialiserMurs();
+        this.casesOccupees = new boolean[largeur][hauteur];
+    }
+
+    public void ajouterJoueur(Personnage joueur) {
+        Position position = joueur.getPosition();
+
+        grille[position.getX()][position.getY()] = joueur;
     }
 
     public void ajouterPersonnage(Personnage personnage) {
@@ -32,13 +44,13 @@ public class Grille {
     }
 
     public void mettreAJourPosition(Position anciennePosition, Position nouvellePosition, Object objet) {
-        // Vérifie si l'objet existe déjà dans la nouvelle position
+        //Vérifie si l'objet existe déjà dans la nouvelle position
         if (positionObjectMap.containsKey(nouvellePosition)) {
             List<Object> objetsDansNouvellePosition = positionObjectMap.get(nouvellePosition);
-            // Si l'objet est déjà dans la nouvelle position, on ne l'ajoute pas à nouveau
+            //Si l'objet est déjà dans la nouvelle position, on ne l'ajoute pas à nouveau
             if (objetsDansNouvellePosition.contains(objet)) {
                 //System.out.println("L'objet est déjà présent à la nouvelle position.");
-                return; // Ne rien faire si l'objet est déjà à la nouvelle position
+                return; //ne rien faire si l'objet est déjà à la nouvelle position
             }
         }
         retirerObjet(anciennePosition, objet);
@@ -46,13 +58,12 @@ public class Grille {
         ajouterObjet(nouvellePosition, objet);
     }
 
-
     public void retirerObjet(Position position, Object objet) {
         if (positionObjectMap.containsKey(position)) {
             List<Object> objets = positionObjectMap.get(position);
-            objets.removeIf(o -> o.equals(objet)); // Retirer l'objet spécifique de la liste
+            objets.removeIf(o -> o.equals(objet)); //Retirer l'objet spécifique de la liste
             if (objets.isEmpty()) {
-                positionObjectMap.remove(position); // Si la case devient vide, on la supprime
+                positionObjectMap.remove(position); //Si la case devient vide, on la supprime
             }
         }
     }
@@ -68,16 +79,16 @@ public class Grille {
                 Position position = new Position(x, y);
                 if (positionObjectMap.containsKey(position)) {
                     List<Object> objets = positionObjectMap.get(position);
-                    // Affichage de chaque objet dans la case
+                    //affichage de chaque objet dans la case
                     for (Object objet : objets) {
                         if (objet instanceof JoueurHumain) {
-                            System.out.print("H ");  // Affiche 'H' pour un joueur humain
+                            System.out.print("H ");  //Affiche 'H' pour un joueur humain
                         } else if (objet instanceof JoueurIA) {
-                            System.out.print("I ");  // Affiche 'I' pour un joueur IA
+                            System.out.print("I ");  //Affiche 'I' pour un joueur IA
                         } else if (objet instanceof Mine) {
-                            System.out.print("M ");  // Affiche 'M' pour une mine
+                            System.out.print("M ");  //Affiche 'M' pour une mine
                         } else if (objet instanceof Bombe) {
-                            System.out.print("B ");  // Affiche 'B' pour une bombe
+                            System.out.print("B ");  //Affiche 'B' pour une bombe
                         }
                     }
                 } else {
@@ -85,12 +96,10 @@ public class Grille {
                     System.out.print(". ");
                 }
             }
-            System.out.println();  // Nouvelle ligne à la fin de chaque ligne de la grille
+            System.out.println();
         }
-        System.out.println();  // Nouvelle ligne après l'affichage de la grille
+        System.out.println();
     }
-
-
 
     public int getLargeur() {
         return largeur;
@@ -103,13 +112,23 @@ public class Grille {
         return this.personnages;
     }
 
+    public boolean estPositionValide(int x, int y) {
+        return x >= 0 && x < largeur && y >= 0 && y < hauteur && !casesOccupees[x][y];
+    }
+
+    public void occuperCase(int x, int y) {
+        if (estPositionValide(x, y)) {
+            casesOccupees[x][y] = true;
+        }
+    }
+
 
     public List<Personnage> getPersonnagesDansRayon(Position centreExplosion, int rayonExplosion, Grille grille) {
         List<Personnage> personnagesDansRayon = new ArrayList<>();
         int x = centreExplosion.getX();
         int y = centreExplosion.getY();
 
-        // Parcourir les cases dans le rayon d'explosion
+        //parcourir les cases dans le rayon d'explosion
         for (int dx = -rayonExplosion; dx <= rayonExplosion; dx++) {
             for (int dy = -rayonExplosion; dy <= rayonExplosion; dy++) {
                 int newX = x + dx;
@@ -173,5 +192,22 @@ public class Grille {
 
         System.out.println("L'objet à la position n'est pas un personnage : " + objet);
         return null;
+    }
+
+    public boolean estOccupeeParMur(int x, int y) {
+        for (Mur mur : murs) {
+            if (mur.getX() == x && mur.getY() == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean poserMineOuBombe(int x, int y) {
+        if (estOccupeeParMur(x, y)) {
+            System.out.println("Impossible de poser la mine ici, il y a un mur.");
+            return false;
+        }
+        return true;
     }
 }

@@ -1,5 +1,7 @@
 package personnagesJeu;
 
+import jeuCombat.Grille;
+
 import java.util.Objects;
 
 public class Position {
@@ -51,6 +53,11 @@ public class Position {
         int deltaY = this.y - autrePosition.getY();
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
+
+    public boolean estLimite(Grille grille) {
+        return getX() < 0 || getX() >= grille.getLargeur() || getY() < 0 || getY() >= grille.getHauteur();
+    }
+
 
 
 }
